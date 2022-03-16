@@ -1,0 +1,3 @@
+# copy to .env and pop it !
+POSTGRES_USER='changeme'
+POSTGRES_PASSWORD='changeme'

@@ -1,0 +1,448 @@
+{
+	"info": {
+		"_postman_id": "9b2677c0-106f-4eee-a489-6ec11227b505",
+		"name": "odoo_api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Version LIST",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/common/version",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"common",
+						"version"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login example",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/common/login",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"common",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "res.partner FIELD LIST",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"model\": \"res.partner\",\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/object/fields_get",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"object",
+						"fields_get"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "res.partner LIST",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"model\": \"res.partner\",\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/object/search_read",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"object",
+						"search_read"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "res.partner LIST detail",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"model\": \"res.partner\",\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\",\n        \"keys\": {\n            \"fields\": [\n                \"name\",\n                \"email\",\n                \"member_lines\"\n            ]\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/object/search_read",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"object",
+						"search_read"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "res.partner RETRIEVE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"model\": \"res.partner\",\n        \"filters\": [\n            [\n                \"email\",\n                \"=\",\n                \"jturbeaux@pm.me\"\n            ]\n        ],\n        \"keys\": {\n            \"limit\": 5\n        },\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/object/search",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"object",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "res.partner RETRIEVE detail",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"model\": \"res.partner\",\n        \"filters\": [\n            [\n                \"email\",\n                \"=\",\n                \"{{email}}\"\n            ]\n        ],\n        \"keys\": {\n            \"limit\": 5,\n            \"fields\": [\n                \"id\",\n                \"name\",\n                \"email\",\n                \"member_lines\"\n            ]\n        },\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/object/search_read",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"object",
+						"search_read"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "res.partner CREATE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"model\": \"res.partner\",\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\",\n        \"vals\": {\n            \"name\": \"{{$randomFirstName}} {{$randomLastName}}\",\n            \"email\": \"{{$randomEmail}}\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/object/create",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"object",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product.category LIST",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    const jsonResponse = pm.response.json();",
+							"    const result = jsonResponse.result",
+							"    ",
+							"    for(var i=0;i<result.length;i++){",
+							"        category = result[i];",
+							"        if (category.name == \"Saleable\"){",
+							"            console.log(category)",
+							"            pm.collectionVariables.set(\"categorie_saleable_id\", category.id);",
+							"        };",
+							"}",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"model\": \"product.category\",\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\",\n        \"keys\": {\n            \"fields\": [\n                \"id\",\n                \"name\"\n            ]\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/object/search_read",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"object",
+						"search_read"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product.template LIST",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    const jsonResponse = pm.response.json();",
+							"    const result = jsonResponse.result",
+							"    ",
+							"    for(var i=0;i<result.length;i++){",
+							"        product = result[i];",
+							"        if (product.membership == true){",
+							"            console.log(product)",
+							"            pm.collectionVariables.set(\"first_product_membership\", product.id);",
+							"        };",
+							"}",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"model\": \"product.template\",\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\",\n        \"keys\": {\n            \"fields\": [\n                \"id\",\n                \"name\",\n                \"list_price\",\n                \"membership\",\n                \"categ_id\",\n                \"detailed_type\"\n            ]\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/object/search_read",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"object",
+						"search_read"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product.template RETRIEVE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"model\": \"product.template\",\n        \"filters\": [\n            [\n                \"id\",\n                \"=\",\n                \"{{first_product_membership}}\"\n            ]\n        ],\n        \"keys\": {\n            \"limit\": 5,\n            \"fields\": [\n                \"id\",\n                \"name\",\n                \"list_price\",\n                \"membership\",\n                \"categ_id\",\n                \"detailed_type\"\n            ]\n        },\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/object/search_read",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"object",
+						"search_read"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product.template membership CREATE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"params\": {\n        \"model\": \"product.template\",\n        \"db\": \"{{db}}\",\n        \"login\": \"{{login}}\",\n        \"password\": \"{{password}}\",\n        \"vals\": {\n            \"name\": \"Adhésion {{$randomAbbreviation}}\",\n            \"list_price\": {{$randomInt}},\n            \"membership\": true,\n            \"categ_id\" : {{categorie_saleable_id}},\n            \"detailed_type\" : \"service\"\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{serveur_odoo_url}}/odoo-api/object/create",
+					"host": [
+						"{{serveur_odoo_url}}"
+					],
+					"path": [
+						"odoo-api",
+						"object",
+						"create"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "serveur_odoo_url",
+			"value": "<url>",
+			"type": "string"
+		},
+		{
+			"key": "db",
+			"value": "Odoo database name",
+			"type": "string"
+		},
+		{
+			"key": "login",
+			"value": "Odoo login",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "Odoo Password",
+			"type": "string"
+		},
+		{
+			"key": "email",
+			"value": "jturbeaux@pm.me",
+			"type": "string"
+		},
+		{
+			"key": "categorie_saleable_id",
+			"value": "<int> RUN product.category LIST",
+			"type": "string"
+		},
+		{
+			"key": "first_product_membership",
+			"value": "<int> RUN product.template LIST",
+			"type": "string"
+		}
+	]
+}

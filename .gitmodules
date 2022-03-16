@@ -1,0 +1,6 @@
+[submodule "extra-addons/odoo_api"]
+	path = extra-addons/odoo_api
+	url = https://github.com/codize-app/odoo_api
+[submodule "extra-addons/vertical-association"]
+	path = extra-addons/vertical-association
+	url = https://github.com/OCA/vertical-association.git

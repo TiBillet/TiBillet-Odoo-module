@@ -1,0 +1,6 @@
+from odoo:14
+
+RUN python3 -m pip install pip --upgrade
+RUN python3 -m pip install inotify
+RUN python3 -m pip install ipython
+RUN python3 -m pip install ipdb
