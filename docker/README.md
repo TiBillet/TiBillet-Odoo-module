@@ -10,16 +10,23 @@ Adhésion / Responsable
 # Dev tool within Odoo :
 
 ```shell
-docker exec -ti odoo_web bash
-python3 -m pip install ipython
-odoo shell
-```
+# edit docker-compose and commit the command. Choose :
+command: sleep 30d
 
-```python
-import odoo
-from odoo import http
-from odoo.http import request
-version = odoo.release.version
+# Launch :
+docker-compose up -d 
+
+# Go inside the container and install the dev tools
+docker exec -ti odoo_web bash
+python3 -m pip install ipython ipdb
+
+# launch odoo serveur
+bash entrypoint.sh --dev reload
+
+# set in your python code a breakpoint 
+import ipdb; ipdb.set_trace()
+
+# enjoy ipdb !
 ```
 
 
