@@ -19,8 +19,8 @@ services:
       - HOST=odoo_db
       - USER=${POSTGRES_USER}
       - PASSWORD=${POSTGRES_PASSWORD}
-#    command: bash entrypoint.sh --dev reload
-    command: sleep 30d
+    command: bash entrypoint.sh --dev reload
+#    command: sleep 30d
 
   odoo_db:
     image: postgres:13
