@@ -7,8 +7,8 @@ services:
 
     depends_on:
       - odoo_db
-    ports:
-      - "8069:8069"
+#    ports:
+#      - "8069:8069"
     volumes:
       - ../extra-addons/odoo_api:/mnt/extra-addons/odoo_api
       - ../extra-addons/tibillet:/mnt/extra-addons/tibillet
