@@ -27,9 +27,11 @@ services:
       - traefik.http.routers.odoo_web.tls.certresolver=myresolver
       - traefik.http.routers.odoo_web.rule=Host(`${DOMAIN}`)
       - traefik.http.services.odoo_web.loadbalancer.server.port=8069
-
     networks:
       - frontend
+      - back_odoo15_db
+
+
   odoo_db:
     image: postgres:13
     environment:
@@ -38,3 +40,14 @@ services:
       POSTGRES_DB: "postgres"
     volumes:
       - ./dbdata:/var/lib/postgresql/data
+    networks:
+      - back_odoo15_db
+
+
+
+networks:
+  frontend:
+    external: true
+  back_odoo15_db:
+    name: "back_odoo15_db"
+
