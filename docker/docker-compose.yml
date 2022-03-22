@@ -29,7 +29,6 @@ services:
       - traefik.http.services.odoo_web.loadbalancer.server.port=8069
     networks:
       - frontend
-      - back_odoo15_db
 
 
   odoo_db:
@@ -41,13 +40,11 @@ services:
     volumes:
       - ./dbdata:/var/lib/postgresql/data
     networks:
-      - back_odoo15_db
+      - frontend
 
 
 
 networks:
   frontend:
     external: true
-  back_odoo15_db:
-    name: "back_odoo15_db"
 
