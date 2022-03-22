@@ -1,3 +1,6 @@
 /docker/dbdata/
 /docker/.env
 /example/secret.py
+/docker_V12/.env
+/docker_V12/package.json
+/docker/package.json
