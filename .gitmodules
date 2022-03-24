@@ -7,3 +7,6 @@
 [submodule "extra-addons/mis-builder"]
 	path = extra-addons/mis-builder
 	url = https://github.com/OCA/mis-builder.git
+[submodule "extra-addons/pos"]
+	path = extra-addons/pos
+	url = https://github.com/OCA/pos.git
