@@ -13,6 +13,8 @@ services:
       - ../extra-addons:/mnt/extra-addons
       - ../extra-addons/vertical-association/membership_extension:/mnt/extra-addons/membership_extension
       - ../extra-addons/vertical-association/membership_variable_period:/mnt/extra-addons/membership_variable_period
+      - ../extra-addons/mis_builder/mis_builder:/mnt/extra-addons/mis_builder
+      - ../extra-addons/mis_builder/mis_builder_budget:/mnt/extra-addons/mis_builder_budget
       - ./odoo.conf:/etc/odoo/odoo.conf
     environment:
       - HOST=odoo_db
