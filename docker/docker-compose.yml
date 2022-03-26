@@ -7,22 +7,21 @@ services:
 
     depends_on:
       - odoo_db
-#    ports:
-#      - "8069:8069"
+    ports:
+      - "8069:8069"
     volumes:
       - ../extra-addons:/mnt/extra-addons
       - ../extra-addons/vertical-association/membership_extension:/mnt/extra-addons/membership_extension
       - ../extra-addons/vertical-association/membership_variable_period:/mnt/extra-addons/membership_variable_period
       - ../extra-addons/mis-builder/mis_builder:/mnt/extra-addons/mis_builder
       - ../extra-addons/mis-builder/mis_builder_budget:/mnt/extra-addons/mis_builder_budget
-      - ../extra-addons/pos/pos_tare:/mnt/extra-addons/pos_tare
       - ./odoo.conf:/etc/odoo/odoo.conf
     environment:
       - HOST=odoo_db
       - USER=${POSTGRES_USER}
       - PASSWORD=${POSTGRES_PASSWORD}
-    command: bash entrypoint.sh --dev reload
-#    command: sleep 30d
+#    command: bash entrypoint.sh --dev reload
+    command: sleep 30d
     labels:
       - traefik.enable=true
       - traefik.docker.network=frontend

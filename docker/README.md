@@ -23,7 +23,7 @@ python3 -m pip install ipython ipdb
 # launch odoo serveur
 bash entrypoint.sh --dev reload
 
-# set in your python code a breakpoint 
+# set in your python code a breakpoint with :
 import ipdb; ipdb.set_trace()
 
 # enjoy ipdb !
