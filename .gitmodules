@@ -10,3 +10,12 @@
 [submodule "extra-addons/pos"]
 	path = extra-addons/pos
 	url = https://github.com/OCA/pos.git
+[submodule "submodule/vertical-association"]
+	path = submodule/vertical-association
+	url = https://github.com/OCA/vertical-association.git
+[submodule "submodule/mis-builder"]
+	path = submodule/mis-builder
+	url = https://github.com/OCA/mis-builder.git
+[submodule "submodule/odoo_api"]
+	path = submodule/odoo_api
+	url = git@github.com:TiBillet/odoo_api.git
