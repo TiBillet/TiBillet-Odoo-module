@@ -29,18 +29,28 @@ import ipdb; ipdb.set_trace()
 # enjoy ipdb !
 ```
 
+# Usefull Doc :
+
+https://gist.github.com/101t/3982252740ce44d3affba37edea6ed33#file-deployment-guide-to-installing-odoo-14-on-ubuntu-20-04-md
+
+https://reedrehg.medium.com/odoo-images-and-attachments-explaining-and-regenerating-assets-d1eb7fe8a3ed
 
 # Know Issues 
 ##asset bug :
 
 ```bash
-# https://reedrehg.medium.com/odoo-images-and-attachments-explaining-and-regenerating-assets-d1eb7fe8a3ed
 
-dex <postgres_conteneur>
-psql -d postgres -U <USER> -W
-\l # liste les bases de données présentes
-\c 3Peaks # rentre dans la db odoo
-DELETE FROM ir_attachment WHERE url LIKE '/web/content/%';
+# see bashrc for detail
+docker exec -ti odoo_web reload_asset <ODOO_DB_NAME>
 ```
 
-and docker-commpose down & up 
+You can also simply prevent Odoo from using the filestore 
+by setting the system parameterir_attachment.location to 
+```db-storage in Settings->Parameters->System Parameters ```.
+(requires technical features).
+
+
+and restart :
+```docker-commpose restart```
+
+

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+export PGPASSWORD=$PASSWORD
+export PGUSER=$USER
+export PGHOST=$HOST
+
+
+dev() {
+bash /entrypoint.sh --dev reload
+}
+
+
+load_sql() {
+psql --dbname postgres -f $1
+}
+
+reload_asset(){
+psql --dbname postgres << EOF
+\c $1
+DELETE FROM ir_attachment WHERE url LIKE '%asset%';
+EOF
+}
+
+# DELETE FROM ir_attachment WHERE url LIKE '%.js';
+# DELETE FROM ir_attachment WHERE url LIKE '%.css';
+# DELETE FROM ir_attachment WHERE datas_fname SIMILAR TO '%.(js|css)';
