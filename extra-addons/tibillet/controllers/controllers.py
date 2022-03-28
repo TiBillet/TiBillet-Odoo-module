@@ -209,7 +209,7 @@ class TiBilletApi(http.Controller):
             'active_ids': invoice_id,
         }
 
-        vals = {
+        values = {
             'payment_date': datetime.now().strftime("%Y-%m-%d"),
             'journal_id': 7,  # Bank journal ID
         }
@@ -218,7 +218,7 @@ class TiBilletApi(http.Controller):
 
         model_name = 'account.payment.register'
         registered_payment_id = self.models.execute_kw(
-            self.db, self.uid, self.apikey, model_name, 'create', [vals], {'context': context})
+            self.db, self.uid, self.apikey, model_name, 'create', [values], {'context': context})
 
         payment = self.models.execute_kw(
             self.db, self.uid, self.apikey, model_name, 'action_create_payments', [[registered_payment_id]], {'context': context})
