@@ -29,6 +29,10 @@ class TiBilletApi(http.Controller):
     uid = common.authenticate(db, login, password, {})
     '''
 
+    '''
+    GENERIC FUNCTION
+    '''
+
     common = xmlrpc.client.ServerProxy('http://127.0.0.1:8069/xmlrpc/2/common')
     models = xmlrpc.client.ServerProxy('http://127.0.0.1:8069/xmlrpc/2/object')
 
@@ -44,13 +48,22 @@ class TiBilletApi(http.Controller):
         return self.models.execute_kw(self.db, self.uid, self.apikey, model, 'fields_get', [],
                                       {'attributes': ['string', 'help', 'type']})
 
-    def read(self, model, ids):
-        return self.models.execute_kw(self.db, self.uid, self.apikey, model, 'read', ids, {'fields': ['name', 'id']})
+    def read(self, model, id=None, fields=None):
+        if id == None:
+            raise AttributeError('No id in read')
+        if fields == None :
+            fields = ['name', 'id']
+        return self.models.execute_kw(self.db, self.uid, self.apikey, model, 'read', [id], {'fields': fields})
 
     def create(self, model, values=None):
         if values is None:
             raise AttributeError('No values for create')
         return self.models.execute_kw(self.db, self.uid, self.apikey, model, 'create', [values])
+
+    def write(self, model, id, values=None):
+        if values is None:
+            raise AttributeError('No values for write')
+        return self.models.execute_kw(self.db, self.uid, self.apikey, model, 'write', [[id], values])
 
     def get_or_create(self, model, filters=[]):
         query = self.search_read(model, filters, ['id'])
@@ -67,6 +80,12 @@ class TiBilletApi(http.Controller):
         else:
             Response.status = "409"
             raise KeyError(f"query return {len(query)} objects")
+
+    def action(self, action):
+        pass
+    '''
+    SPECIFIC FUNCTION FOR MEMBERSHIP CREATION
+    '''
 
     def get_or_create_membre(self, membre):
         created = False
@@ -90,9 +109,13 @@ class TiBilletApi(http.Controller):
 
         return membre_uid, created
 
-    def get_or_create_membership_product(self, adhesion):
+    def get_or_create_membership_product(self, adhesion=None):
+        if adhesion is None:
+            raise AttributeError(f"adhesion must be a json valid with category and product_name")
+
         category = adhesion["category"]
         product_name = adhesion["product_name"]
+        created = False
 
         # get categorie product
         if not self.categorie_saleable_id:
@@ -106,19 +129,19 @@ class TiBilletApi(http.Controller):
             self.membership_category_id = membership_category
 
         if not self.membership_product_id:
-            membership_product, db_created = self.get_or_create('product.template',
-                                                                [
-                                                                    ['name', '=', product_name],
-                                                                    ['membership', '=', True],
-                                                                    ['categ_id', '=', self.categorie_saleable_id],
-                                                                    ['detailed_type', '=', 'service'],
-                                                                    ['membership_type', '=', 'variable'],
-                                                                    ['membership_interval_qty', '=', 1],
-                                                                    ['membership_category_id', '=',
-                                                                     self.membership_category_id],
-                                                                ])
+            membership_product, created = self.get_or_create('product.template',
+                                                             [
+                                                                 ['name', '=', product_name],
+                                                                 ['membership', '=', True],
+                                                                 ['categ_id', '=', self.categorie_saleable_id],
+                                                                 ['detailed_type', '=', 'service'],
+                                                                 ['membership_type', '=', 'variable'],
+                                                                 ['membership_interval_qty', '=', 1],
+                                                                 ['membership_category_id', '=',
+                                                                  self.membership_category_id],
+                                                             ])
             self.membership_product_id = membership_product
-        return self.membership_product_id
+        return self.membership_product_id, created
 
     def create_draft_invoice(self, partner_id):
         if not self.eur_currency_id:
@@ -141,6 +164,70 @@ class TiBilletApi(http.Controller):
 
         return self.create("account.move", values=values)
 
+    def clear_invoice_lines(self, invoice_id=None):
+        values = {
+            "invoice_line_ids": [
+                [5, 0, 0],
+            ]
+        }
+        return self.write('account.move', invoice_id, values)
+
+    def add_product_to_invoice(self, invoice_id=None, product_id=None, price_unit=None, qty=1):
+        if invoice_id == None or \
+            product_id == None or \
+            price_unit == None :
+            raise AttributeError(f"add_product_to_invoice attribute error")
+
+        values = {
+            "invoice_line_ids": [
+                [0, 0, {
+                    "move_id": invoice_id,
+                    "currency_id": "2",
+                    "product_id": product_id,
+                    "price_unit": price_unit,
+                    "quantity": qty
+                }
+                 ]
+            ]
+        }
+        return self.write('account.move', invoice_id, values)
+
+    '''
+    ACTION
+    '''
+
+    def invoice_post(self, invoice_id=None):
+        self.models.execute_kw(self.db, self.uid, self.apikey, 'account.move', 'action_post', [[invoice_id]])
+        query = self.read('account.move', id=invoice_id, fields=['id', 'state'] )
+        invoice = query[0]
+        return invoice['state']
+
+    def payment(self, invoice_id=None):
+
+        context = {
+            'active_model': 'account.move',
+            'active_ids': invoice_id,
+        }
+
+        vals = {
+            'payment_date': datetime.now().strftime("%Y-%m-%d"),
+            'journal_id': 7,  # Bank journal ID
+        }
+            # 'payment_method_id': 1,  # manual
+            # 'amount': 2000.00,
+
+        model_name = 'account.payment.register'
+        registered_payment_id = self.models.execute_kw(
+            self.db, self.uid, self.apikey, model_name, 'create', [vals], {'context': context})
+
+        payment = self.models.execute_kw(
+            self.db, self.uid, self.apikey, model_name, 'action_create_payments', [[registered_payment_id]], {'context': context})
+
+        return payment
+
+    '''
+    CLASS INITIALISATION
+    '''
     def __init__(self):
         super().__init__()
         self.random = str(random.random())
@@ -163,6 +250,10 @@ class TiBilletApi(http.Controller):
         _logger.info(f"******************************")
         _logger.info(f"__init__ self.random' : {self.random}")
         _logger.info(f"******************************")
+
+    '''
+    AUTH VALIDATOR
+    '''
 
     def user_permission_validator(self):
         if self.show_full_accounting_features and self.manager:
@@ -202,6 +293,10 @@ class TiBilletApi(http.Controller):
 
         return uid
 
+
+    '''
+    API HTTP ROUTING
+    '''
     # Check version
     @http.route('/tibillet-api/common/version', type="json", auth='none', cors=CORS)
     def version(self, **kw):
@@ -238,9 +333,17 @@ class TiBilletApi(http.Controller):
             uid = self.auth_validator(db, login, apikey)
             membre_uid, created = self.get_or_create_membre(membre)
 
-            self.membership_product_id = self.get_or_create_membership_product(adhesion)
-
+            membership_product_id, pcreated = self.get_or_create_membership_product(adhesion)
             draft_invoice_id = self.create_draft_invoice(membre_uid)
+            # clear = self.clear_invoice_lines(draft_invoice_id)
+            membership_product_added = self.add_product_to_invoice(
+                invoice_id=draft_invoice_id,
+                product_id=membership_product_id,
+                price_unit=adhesion['price_unit'],
+                qty=1)
+
+            invoice_state = self.invoice_post(draft_invoice_id)
+            payment = self.payment(draft_invoice_id)
 
             return {
                 "random": self.random,
@@ -250,6 +353,9 @@ class TiBilletApi(http.Controller):
                 "eur_currency_id": self.eur_currency_id,
                 "account_journal_id": self.account_journal_id,
                 "draft_invoice_id": draft_invoice_id,
+                "product_line_added": membership_product_added,
+                "invoice_state" : invoice_state,
+                'payment': payment,
                 "responsable": uid,
                 "created": created,
                 "membre_db": membre_uid
