@@ -10,7 +10,7 @@ services:
     ports:
       - "8069:8069"
     volumes:
-      - ../extra-addons:/mnt/extra-addons
+      - ../extra-addons/tibillet:/mnt/extra-addons/tibillet
       - ../submodule/odoo_api:/mnt/extra-addons/odoo_api
       - ../submodule/vertical-association/membership_extension:/mnt/extra-addons/membership_extension
       - ../submodule/vertical-association/membership_variable_period:/mnt/extra-addons/membership_variable_period

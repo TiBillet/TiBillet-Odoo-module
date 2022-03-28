@@ -4,6 +4,9 @@ export PGPASSWORD=$PASSWORD
 export PGUSER=$USER
 export PGHOST=$HOST
 
+install_dev_tool(){
+python3 -m pip install ipython ipdb --user
+}
 
 dev() {
 bash /entrypoint.sh --dev reload
