@@ -223,7 +223,10 @@ class TiBilletApi(http.Controller):
         payment = self.models.execute_kw(
             self.db, self.uid, self.apikey, model_name, 'action_create_payments', [[registered_payment_id]], {'context': context})
 
-        return payment
+        query = self.read('account.move', id=invoice_id, fields=['id', 'payment_state'] )
+        invoice = query[0]
+
+        return invoice['payment_state']
 
     '''
     CLASS INITIALISATION
