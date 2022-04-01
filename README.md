@@ -9,14 +9,15 @@ Odoo for TiBillet financial report
 - [x] Nouvelle adhésion TiBillet -> Odoo
 - [x] Création d'un nouvel article d'adhésion s'il n'existe pas
 - [x] Facturation en brouillon de l'adhésion
-- [x] Enregistrement d'un paiement de facture
+- [x] Validation de la facture
+- [x] Paiement de la facture
 - [ ] Selection du moyen de paiement
 
 # API :
 
 Postman documentation : https://documenter.getpostman.com/view/17519122/UVypzHCa
 
-### Version :
+## Version :
 
 	POST http://localhost:8069/tibillet-api/common/version
 
@@ -45,7 +46,7 @@ Postman documentation : https://documenter.getpostman.com/view/17519122/UVypzHCa
 ```
 
 
-### Login :
+## Login :
 
 	POST http://localhost:8069/tibillet-api/xmlrpc/login
 
@@ -83,6 +84,73 @@ Attribute | Type | Required | Description
             "show_full_accounting_features": 25,
             "manager": 31
         }
+    }
+}
+```
+
+## Nouvelle Adhésion
+
+	POST http://localhost:8069/tibillet-api/xmlrpc/new_membership/
+
+#### Parameters
+
+Attribute | Type   | Required | Description
+--- |--------|----------| ---
+`db` | string | yes      | Odoo server DB name
+`login` | string | yes      | Odoo User
+`api_key` | string | yes      | Odoo User ApiKey
+`create_invoice` | bool   | no       | Crée une factured e l'adhésion en brouillon avec si True
+`set_payment` | bool | no       | Valide la facture et créé un paiement
+`membre:name` | string | yes      | Nom / Prenom
+`membre:email` | string | yes      | Si email existe déja, utilise le contact existant.
+`adhesion:product_name` | string | yes      | Nom de l'adhésion
+`adhesion:category` | string | yes      | Tag odoo "Catégorie d'adhésion" visible sur la fiche de l'adhérant.
+`adhesion:price_unit` | string | yes      | Tarif de l'adhésion.
+`adhesion:payment_method` | string | yes      | Type de paiement. Accèpte uniquement : Espèce / CB
+
+
+#### POST DATA
+
+```json
+{
+    "params": {
+        "db": "{{db}}",
+        "login": "{{login}}",
+        "apikey": "{{api_key}}",
+        "create_invoice": true,
+        "set_payment": true,
+        "membre": {
+            "name": "{{$randomFirstName}} {{$randomLastName}}",
+            "email": "{{$randomEmail}}"
+        },
+        "adhesion": {
+            "product_name": "Adhésion",
+            "category": "Adhérant",
+            "price_unit": 52,
+            "payment_method": "Espèces"
+        }
+    }
+}
+```
+
+#### Response :
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": null,
+    "result": {
+        "random": "0.5980815715295654",
+        "name": "Eldora Hansen",
+        "email": "Leilani22@hotmail.com",
+        "categorie_saleable_id": 2,
+        "membership_category_id": 2,
+        "membership_product_id": 1,
+        "invoice_state": "posted",
+        "payment_state": "paid",
+        "responsable": 2,
+        "created": true,
+        "membre_db": 145
     }
 }
 ```
