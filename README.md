@@ -7,11 +7,18 @@ Odoo for TiBillet financial report
 - [x] Api Check Login
 - [x] API Création de fiche contact Odoo
 - [x] Nouvelle adhésion TiBillet -> Odoo
+- [x] Utilise le contact existant avec même email
 - [x] Création d'un nouvel article d'adhésion s'il n'existe pas
 - [x] Facturation en brouillon de l'adhésion
 - [x] Validation de la facture
 - [x] Paiement de la facture
-- [ ] Selection du moyen de paiement
+- [ ] Selection du moyen de paiement ( actuellement que Espèce / Banque )
+- [ ] Connexion avec le module POS ( point de vente )
+- [ ] Ajout de chaque article vendu dans TiBillvet -> Odoo
+- [ ] Gestion de la monnaie dans compte et journaux Odoo
+- [ ] Ajout de la monnaie cashless dans les POS
+- [ ] Interfaçage des boitiers lecteurs NFC TiBillet dans POS Odoo
+- [ ] Accepter les monnaies cashless dans POS Odoo
 
 # API :
 
@@ -52,12 +59,11 @@ Postman documentation : https://documenter.getpostman.com/view/17519122/UVypzHCa
 
 #### Parameters
 
-Attribute | Type | Required | Description
---- | --- | --- | ---
-`db` | string | yes | Odoo server DB name
-`login` | string | yes | Odoo User
-`api_key` | string | yes | Odoo User ApiKey
-
+| Attribute | Type   | Required | Description         |
+|-----------|--------|----------|---------------------|
+| `db`      | string | yes      | Odoo server DB name |
+| `login`   | string | yes      | Odoo User           |
+| `api_key` | string | yes      | Odoo User ApiKey    |
 
 #### POST DATA
 ```json
@@ -94,20 +100,19 @@ Attribute | Type | Required | Description
 
 #### Parameters
 
-Attribute | Type   | Required | Description
---- |--------|----------| ---
-`db` | string | yes      | Odoo server DB name
-`login` | string | yes      | Odoo User
-`api_key` | string | yes      | Odoo User ApiKey
-`create_invoice` | bool   | no       | Crée une factured e l'adhésion en brouillon avec si True
-`set_payment` | bool | no       | Valide la facture et créé un paiement
-`membre:name` | string | yes      | Nom / Prenom
-`membre:email` | string | yes      | Si email existe déja, utilise le contact existant.
-`adhesion:product_name` | string | yes      | Nom de l'adhésion
-`adhesion:category` | string | yes      | Tag odoo "Catégorie d'adhésion" visible sur la fiche de l'adhérant.
-`adhesion:price_unit` | string | yes      | Tarif de l'adhésion.
-`adhesion:payment_method` | string | yes      | Type de paiement. Accèpte uniquement : Espèce / CB
-
+| Attribute                 | Type   | Required | Description                                                         |
+|---------------------------|--------|----------|---------------------------------------------------------------------|
+| `db`                      | string | yes      | Odoo server DB name                                                 |
+| `login`                   | string | yes      | Odoo User                                                           |
+| `api_key`                 | string | yes      | Odoo User ApiKey                                                    |
+| `create_invoice`          | bool   | no       | Crée une factured e l'adhésion en brouillon avec si True            |
+| `set_payment`             | bool   | no       | Valide la facture et créé un paiement                               |
+| `membre:name`             | string | yes      | Nom / Prenom                                                        |
+| `membre:email`            | string | yes      | Si email existe déja, utilise le contact existant.                  |
+| `adhesion:product_name`   | string | yes      | Nom de l'adhésion                                                   |
+| `adhesion:category`       | string | yes      | Tag odoo "Catégorie d'adhésion" visible sur la fiche de l'adhérant. |
+| `adhesion:price_unit`     | string | yes      | Tarif de l'adhésion.                                                |
+| `adhesion:payment_method` | string | yes      | Type de paiement. Accèpte uniquement : Espèce / Banque                  |
 
 #### POST DATA
 
