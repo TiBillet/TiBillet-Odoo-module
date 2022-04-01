@@ -196,7 +196,7 @@ Notez aussi le nom que vous avez donné à la base de donnée odoo.
 
 ## Avec un Odoo 15 déjà installé
 
-Copiez et/ou montez ces dossier dans le dossier addon de votre installation.
+Copiez et/ou montez ces dossiers dans le dossier addon de votre installation.
 
 - extra-addons/tibillet:/mnt/extra-addons/tibillet
 - submodule/odoo_api:/mnt/extra-addons/odoo_api
