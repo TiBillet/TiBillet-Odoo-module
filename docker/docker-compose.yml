@@ -23,7 +23,7 @@ services:
       - USER=${POSTGRES_USER}
       - PASSWORD=${POSTGRES_PASSWORD}
 #    command: bash entrypoint.sh --dev reload
-    command: sleep 30d
+#    command: sleep 30d
     labels:
       - traefik.enable=true
       - traefik.docker.network=frontend
