@@ -135,16 +135,12 @@ class TiBilletApi(http.Controller):
         query_membre = self.search_read('res.partner', [["email", "=", email]], [])
 
         if len(query_membre) == 1:
-            # Response.status = '409'
-            raise UserError("Email exist")
+            return query_membre[0]['id'], False
         elif len(query_membre) == 0:
             membre_uid = self.create('res.partner', values=membre)
-            created = True
+            return membre_uid, True
         else:
-            # Response.status = "409"
             raise KeyError(f"query with {email} return {len(query_membre)} objects")
-
-        return membre_uid, created
 
     def get_or_create_membership_product(self, adhesion=None):
         if adhesion is None:
