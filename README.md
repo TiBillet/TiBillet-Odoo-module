@@ -274,4 +274,6 @@ Jonas TURBEAUX for TiBillet ( www.tibillet.re )
 
 - La Raffinerie
 
-- [![logo La Raffinerie](https://documentation.laraffinerie.re/images/thumb/c/c3/LogoRaffinerie.png/300px-LogoRaffinerie.png)](https://www.laraffinerie.re)
+[![logo La Raffinerie](https://documentation.laraffinerie.re/images/thumb/c/c3/LogoRaffinerie.png/300px-LogoRaffinerie.png)](https://www.laraffinerie.re)
+
+- @ibuioli Ignacio Buioli for his example git : https://github.com/codize-app/odoo_api
