@@ -264,3 +264,14 @@ Rajoutez les droits d'utilisateur dans Odoo :
 Paramètres -> utilisateurs et sociétés -> Groupes
 - Technique / Montrer les fonctions de comptabilité complètes
 - Adhésion / Responsable
+
+
+# AUTHORS
+
+Jonas TURBEAUX for TiBillet ( www.tibillet.re )
+
+# THANKS & SPONSORS
+
+- La Raffinerie
+
+- [![logo La Raffinerie](https://documentation.laraffinerie.re/images/thumb/c/c3/LogoRaffinerie.png/300px-LogoRaffinerie.png)](https://www.laraffinerie.re)
