@@ -26,7 +26,6 @@
         'membership',
         'membership_extension',
         'membership_variable_period',
-        'odoo_api'
     ],
 
     'data': [],

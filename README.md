@@ -9,10 +9,11 @@ Odoo for TiBillet financial report
 - [x] Nouvelle adhésion TiBillet -> Odoo
 - [x] Utilise le contact existant avec même email
 - [x] Création d'un nouvel article d'adhésion s'il n'existe pas
+- [ ] Gestion des périodes d'adhésion ( pour l'instant : 365j )
 - [x] Facturation en brouillon de l'adhésion
 - [x] Validation de la facture
 - [x] Paiement de la facture
-- [ ] Selection du moyen de paiement ( actuellement que Espèce / Banque )
+- [ ] Selection du moyen de paiement ( actuellement uniquement Espèce )
 - [ ] Connexion avec le module POS ( point de vente )
 - [ ] Ajout de chaque article vendu dans TiBillvet -> Odoo
 - [ ] Gestion de la monnaie dans compte et journaux Odoo
@@ -163,6 +164,13 @@ Postman documentation : https://documenter.getpostman.com/view/17519122/UVypzHCa
 
 # Install :
 
+Need :
+- Linux 
+- Odoo V15
+- docker
+- docker-compose V3
+- Traefik ( for reverse-proxy )
+
 ## From scratch :
 
 
@@ -195,7 +203,7 @@ Copiez et/ou montez ces dossier dans le dossier addon de votre installation.
 ## Inside Odoo
 
 Allez sur Odoo / Application. Retirez le tag "application" dans la barre de recherche. Tapez "tibillet" et installez.
-Cela va vérifier si les application suivantes sont installées et les installer si besoin.
+Cela va vérifier si les applications suivantes sont installées et les installer si besoin.
 
 ```
 # __manifest__.py
@@ -206,7 +214,6 @@ Cela va vérifier si les application suivantes sont installées et les installer
     'membership',
     'membership_extension',
     'membership_variable_period',
-    'odoo_api'
 ], 
 ```
 
