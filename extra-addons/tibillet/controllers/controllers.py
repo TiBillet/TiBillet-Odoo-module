@@ -329,15 +329,15 @@ class TiBilletApi(http.Controller):
     '''
 
     # Check version
-    @http.route('/tibillet-api/common/version', type="json", auth='none', cors=CORS)
+    @http.route('/tibillet-api/common/version', type="json", auth='none', cors=CORS, csrf=False)
     def version(self, **kw):
         version = self.common.version()
         version['random'] = self.random
         return version
 
     # login
-    @http.route('/tibillet-api/xmlrpc/login', type="json", auth='none', cors=CORS)
-    def login(self, db=None, login=None, apikey=None, **kw):
+    @http.route('/tibillet-api/xmlrpc/login', type="json", auth='none', cors=CORS, csrf=False)
+    def check_login(self, db=None, login=None, apikey=None, **kw):
         try:
             uid = self.auth_validator(db, login, apikey)
             # another way :

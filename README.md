@@ -3,8 +3,14 @@ Odoo for TiBillet financial report
 
 # RoadMap :
 - [x] XMLRPX http API
+- [x] Api Check Version
+- [x] Api Check Login
 - [x] API Création de fiche contact Odoo
 - [x] Nouvelle adhésion TiBillet -> Odoo
+- [x] Création d'un nouvel article d'adhésion s'il n'existe pas
+- [x] Facturation en brouillon de l'adhésion
+- [x] Enregistrement d'un paiement de facture
+- [ ] Selection du moyen de paiement
 
 # API :
 
@@ -14,7 +20,7 @@ Postman documentation : https://documenter.getpostman.com/view/17519122/UVypzHCa
 
 	POST http://localhost:8069/tibillet-api/common/version
 
-####BODY
+#### POST DATA
 ```json
 {
     "params": {}
@@ -29,12 +35,7 @@ Postman documentation : https://documenter.getpostman.com/view/17519122/UVypzHCa
     "result": {
         "server_version": "15.0-20220307",
         "server_version_info": [
-            15,
-            0,
-            0,
-            "final",
-            0,
-            ""
+            15, 0, 0, "final", 0, ""
         ],
         "server_serie": "15.0",
         "protocol_version": 1,
@@ -43,6 +44,48 @@ Postman documentation : https://documenter.getpostman.com/view/17519122/UVypzHCa
 }
 ```
 
+
+### Login :
+
+	POST http://localhost:8069/tibillet-api/xmlrpc/login
+
+#### Parameters
+
+Attribute | Type | Required | Description
+--- | --- | --- | ---
+`db` | string | yes | Odoo server DB name
+`login` | string | yes | Odoo User
+`api_key` | string | yes | Odoo User ApiKey
+
+
+#### POST DATA
+```json
+{
+    "params": {
+        "db": "{{db}}",
+        "login": "{{login}}",
+        "apikey": "{{api_key}}"
+    }
+}
+```
+
+#### Response :
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": null,
+    "result": {
+        "random": "0.7985724403682478",
+        "user_uid": 2,
+        "authentification": true,
+        "permissions": {
+            "show_full_accounting_features": 25,
+            "manager": 31
+        }
+    }
+}
+```
 
 
 # Install :
@@ -94,3 +137,30 @@ Cela va vérifier si les application suivantes sont installées et les installer
 ], 
 ```
 
+## Testez l'API et l'Authentification
+
+```shell
+curl --location --request POST 'http://localhost:8069/tibillet-api/xmlrpc/login' \
+--data-raw '{
+    "params": {
+        "db": "${ODOO_DATABASE}",
+        "login": "${LOGIN}>",
+        "apikey": "${API_KEY}"
+    }
+}'
+```
+
+### Permissions :
+
+Si None dans les permissions :
+```js
+        "permissions": {
+            "show_full_accounting_features": None,
+            "manager": none
+        }
+```
+
+Rajoutez les droits d'utilisateur dans Odoo :
+Paramètres -> utilisateurs et sociétés -> Groupes
+- Technique / Montrer les fonctions de comptabilité complètes
+- Adhésion / Responsable
