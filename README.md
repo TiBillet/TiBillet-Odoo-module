@@ -1,5 +1,8 @@
 # Odoo
-Odoo for TiBillet financial report
+
+Odoo connexion for TiBillet environment
+https://www.tibillet.re
+https://github.com/TiBillet
 
 # RoadMap :
 - [x] XMLRPX http API
@@ -202,6 +205,8 @@ Copiez et/ou montez ces dossier dans le dossier addon de votre installation.
 
 ## Inside Odoo
 
+### Installer l'addon
+
 Allez sur Odoo / Application. Retirez le tag "application" dans la barre de recherche. Tapez "tibillet" et installez.
 Cela va vérifier si les applications suivantes sont installées et les installer si besoin.
 
@@ -216,6 +221,21 @@ Cela va vérifier si les applications suivantes sont installées et les installe
     'membership_variable_period',
 ], 
 ```
+
+### Créer une clé d'api
+
+https://www.odoo.com/documentation/15.0/developer/misc/api/odoo.html#api-keys
+
+### Configurer le Cashless de TiBillet
+
+Dans l'interface admin -> Configuration Générale -> Onglet ODOO.
+Renseignez les champs obligatoires.
+
+Vous pouvez choisir de ne pas activer l'envoie vers Odoo, de ne créer que des factures en brouillon, ou des factures validées et payées.
+
+```Last log odoo:``` Vous montre la validité de la dernière action.
+
+## Configurer le Cashless
 
 ## Testez l'API et l'Authentification
 
