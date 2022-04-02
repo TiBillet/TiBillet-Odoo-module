@@ -178,7 +178,7 @@ Need :
 
 
 ```
-git clone --recurse-submodules https://github.com/TiBillet/Odoo.git
+git clone --recurse-submodules git@github.com:TiBillet/TiBillet-Odoo-module.git
 ```
 
 Copier le fichier ```docker/env_example``` vers ```docker/.env```.
