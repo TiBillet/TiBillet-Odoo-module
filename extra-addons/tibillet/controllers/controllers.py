@@ -253,7 +253,7 @@ class TiBilletApi(http.Controller):
     def payment(self, invoice_id=None, amount=None, payment_method=None):
         if payment_method is None \
                 or not self.accounts_journals.get(payment_method):
-            raise AttributeError("payment_method not valid.")
+            raise AttributeError(f"payment_method not valid. Disponible : {self.accounts_journals}")
 
         context = {
             'active_model': 'account.move',
