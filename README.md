@@ -17,7 +17,7 @@ https://github.com/TiBillet
 - [x] Facturation en brouillon de l'adhésion
 - [x] Validation de la facture
 - [x] Paiement de la facture
-- [x] Selection du moyen de paiement ( Doit être account.journal )
+- [x] Selection du moyen de paiement ( Doit être account.journal. A indiquer dans la configuration de l'instance cashless )
 - [ ] Création des moyens de paiements manquant ( account.journal )
 - [ ] Connexion avec le module POS ( point de vente )
 - [ ] Ajout de chaque article vendu dans TiBillvet -> Odoo
