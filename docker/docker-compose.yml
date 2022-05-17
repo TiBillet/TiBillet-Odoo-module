@@ -7,8 +7,8 @@ services:
 
     depends_on:
       - odoo_db
-    ports:
-      - "8069:8069"
+    expose:
+      - 8069
     volumes:
       - ../extra-addons/tibillet:/mnt/extra-addons/tibillet
       - ../submodule/odoo_api:/mnt/extra-addons/odoo_api
@@ -27,10 +27,10 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=frontend
-      - traefik.http.routers.odoo_web.tls=true
-      - traefik.http.routers.odoo_web.tls.certresolver=myresolver
-      - traefik.http.routers.odoo_web.rule=Host(`${DOMAIN}`)
-      - traefik.http.services.odoo_web.loadbalancer.server.port=8069
+      - traefik.http.routers.odoo_15.tls=true
+      - traefik.http.routers.odoo_15.tls.certresolver=myresolver
+      - traefik.http.routers.odoo_15.rule=Host(`${DOMAIN}`)
+      - traefik.http.services.odoo_15.loadbalancer.server.port=8069
     networks:
       - frontend
       - back_odoo15_db
