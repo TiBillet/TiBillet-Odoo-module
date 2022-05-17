@@ -27,6 +27,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=frontend
+      - traefik.http.routers.odoo_web.tls=true
       - traefik.http.routers.odoo_web.tls.certresolver=myresolver
       - traefik.http.routers.odoo_web.rule=Host(`${DOMAIN}`)
       - traefik.http.services.odoo_web.loadbalancer.server.port=8069
