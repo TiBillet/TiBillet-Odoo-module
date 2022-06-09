@@ -11,11 +11,11 @@ services:
       - 8069
     volumes:
       - ../extra-addons/tibillet:/mnt/extra-addons/tibillet
-      - ../submodule/odoo_api:/mnt/extra-addons/odoo_api
+#      - ../submodule/odoo_api:/mnt/extra-addons/odoo_api
       - ../submodule/vertical-association/membership_extension:/mnt/extra-addons/membership_extension
       - ../submodule/vertical-association/membership_variable_period:/mnt/extra-addons/membership_variable_period
-      - ../submodule/mis-builder/mis_builder:/mnt/extra-addons/mis_builder
-      - ../submodule/mis-builder/mis_builder_budget:/mnt/extra-addons/mis_builder_budget
+#      - ../submodule/mis-builder/mis_builder:/mnt/extra-addons/mis_builder
+#      - ../submodule/mis-builder/mis_builder_budget:/mnt/extra-addons/mis_builder_budget
       - ./odoo.conf:/etc/odoo/odoo.conf
       - ./bashrc:/var/lib/odoo/.bashrc
     environment:
