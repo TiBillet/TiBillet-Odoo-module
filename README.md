@@ -206,7 +206,6 @@ Notez aussi le nom que vous avez donné à la base de donnée odoo.
 Copiez et/ou montez ces dossiers dans le dossier addon de votre installation.
 
 - extra-addons/tibillet:/mnt/extra-addons/tibillet
-- submodule/odoo_api:/mnt/extra-addons/odoo_api
 - submodule/vertical-association/membership_extension:/mnt/extra-addons/membership_extension
 - submodule/vertical-association/membership_variable_period:/mnt/extra-addons/membership_variable_period
 
