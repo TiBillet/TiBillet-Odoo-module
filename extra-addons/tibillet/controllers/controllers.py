@@ -192,22 +192,30 @@ class TiBilletApi(http.Controller):
         self.curencys = all_currency
         return all_currency
 
-    def create_draft_invoice(self, partner_id):
+    def create_draft_invoice(self, partner_id, datetime_str):
         if not self.accounts_journals.get('Factures clients'):
             self.get_all_account_journal()
 
         if not self.curencys.get('EUR'):
             self.get_all_curencys()
 
+        if datetime_str :
+            date_invoice = datetime_str
+        else :
+            date_invoice = datetime.now().strftime("%Y-%m-%d")
+
+
         values = {
             "currency_id": self.curencys.get('EUR'),
-            "date": datetime.now().strftime("%Y-%m-%d"),
+            "date": date_invoice,
+            "invoice_date": date_invoice,
             "journal_id": self.accounts_journals.get('Factures clients'),
             "partner_id": partner_id,
             "payment_state": "not_paid",
             "state": "draft",
             "move_type": "out_invoice"
         }
+
 
         invoice_draft_id = self.create("account.move", values=values)
         return invoice_draft_id
@@ -250,7 +258,7 @@ class TiBilletApi(http.Controller):
         invoice = query[0]
         return invoice['state']
 
-    def payment(self, invoice_id=None, amount=None, payment_method=None):
+    def payment(self, invoice_id=None, amount=None, payment_method=None, datetime_str=None):
         if payment_method is None \
                 or not self.accounts_journals.get(payment_method):
             raise AttributeError(f"payment_method not valid. Disponible : {self.accounts_journals}")
@@ -260,8 +268,12 @@ class TiBilletApi(http.Controller):
             'active_ids': invoice_id,
         }
 
+        payment_date = datetime.now().strftime("%Y-%m-%d")
+        if datetime_str :
+            payment_date = datetime_str
+
         values = {
-            'payment_date': datetime.now().strftime("%Y-%m-%d"),
+            'payment_date': payment_date,
             'journal_id': self.accounts_journals.get(payment_method),
             'amount': amount,
         }
@@ -352,6 +364,7 @@ class TiBilletApi(http.Controller):
                         "manager": self.manager
                     }
             }
+
         except Exception as e:
             # if Response.status == 200:
             #     Response.status = '400'
@@ -361,14 +374,25 @@ class TiBilletApi(http.Controller):
     @http.route('/tibillet-api/xmlrpc/new_membership', type="json", auth='none', cors=CORS, csrf=False)
     def new_membership(self,
                        db=None, login=None, apikey=None,
-                       membre=None, adhesion=None,
-                       create_invoice=None, set_payment=None,
+                       membre=None,
+                       adhesion=None,
+                       create_invoice=None,
+                       set_payment=None,
                        **kw):
 
         if adhesion is None:
             raise AttributeError("Pas d'adhésion")
         if membre is None:
             raise AttributeError('Pas de membre')
+
+        datetime_str = None
+        if adhesion.get('datetime_str') :
+            try:
+                datetime_str = datetime.strptime(adhesion.get('datetime_str'), "%Y-%m-%d").strftime("%Y-%m-%d")
+            except:
+                raise AttributeError('Date doit être au format "%Y-%m-%d"')
+
+        # import ipdb; ipdb.set_trace()
 
         try:
             uid = self.auth_validator(db, login, apikey)
@@ -378,7 +402,7 @@ class TiBilletApi(http.Controller):
             payment_state = "No payment"
             if create_invoice:
                 membership_product_id, pcreated = self.get_or_create_membership_product(adhesion)
-                draft_invoice_id = self.create_draft_invoice(membre_uid)
+                draft_invoice_id = self.create_draft_invoice(membre_uid, datetime_str)
 
                 # clear = self.clear_invoice_lines(draft_invoice_id)
 
@@ -394,7 +418,8 @@ class TiBilletApi(http.Controller):
                     payment_state = self.payment(
                         draft_invoice_id,
                         amount=adhesion['price_unit'],
-                        payment_method=adhesion['payment_method']
+                        payment_method=adhesion['payment_method'],
+                        datetime_str=datetime_str
                     )
                 else:
                     query = self.read('account.move', id=draft_invoice_id, fields=['id', 'state'])

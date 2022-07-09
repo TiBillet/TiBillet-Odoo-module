@@ -321,7 +321,6 @@ by setting the system parameterir_attachment.location to
 ```db-storage in Settings->Parameters->System Parameters ```.
 (requires technical features).
 
-
 and restart :
 ```docker-commpose restart```
 
@@ -333,11 +332,15 @@ Jonas TURBEAUX for TiBillet ( https://www.tibillet.re )
 
 - La Raffinerie
 
+https://www.laraffinerie.re
+ 
 [![logo La Raffinerie](https://documentation.laraffinerie.re/images/thumb/c/c3/LogoRaffinerie.png/300px-LogoRaffinerie.png)](https://www.laraffinerie.re)
 
 - Communnecter.org
 
-[![logo Communnecter](https://www.communecter.org/assets/94396c20/images/logos/logo-full.png)](https://https://www.communecter.org)
+https://www.communecter.org
+
+[![logo Communnecter](https://www.communecter.org/assets/94396c20/images/logos/logo-full.png)](https://www.communecter.org)
 
 - JetBrain
 
