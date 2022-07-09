@@ -7,8 +7,10 @@ services:
 
     depends_on:
       - odoo_db
-    expose:
-      - 8069
+    ports:
+      - 8069:8069
+#    expose:
+#      - 8069:8069
     volumes:
       - ../extra-addons/tibillet:/mnt/extra-addons/tibillet
 #      - ../submodule/odoo_api:/mnt/extra-addons/odoo_api
@@ -35,7 +37,6 @@ services:
       - frontend
       - back_odoo15_db
 
-
   odoo_db:
     image: postgres:13
     environment:
@@ -46,8 +47,6 @@ services:
       - ./dbdata:/var/lib/postgresql/data
     networks:
       - back_odoo15_db
-
-
 
 networks:
   frontend:
