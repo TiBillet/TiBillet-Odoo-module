@@ -244,10 +244,46 @@ validées et payées.
 
 ## Configurer le Cashless
 
-## Testez l'API et l'Authentification
+## API Test
+
+### Version ( no auth is needed ):
 
 ```shell
+curl --location --request POST 'http://localhost:8069/tibillet-api/common/version' \
+-H "Content-Type: application/json" \
+--data-raw '{
+    "params": {
+    }
+}'
+```
+
+Example response OK :
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": null,
+  "result": {
+    "server_version": "15.0-20220629",
+    "server_version_info": [
+      15,
+      0,
+      0,
+      "final",
+      0,
+      ""
+    ],
+    "server_serie": "15.0",
+    "protocol_version": 1,
+    "random": "0.6265766626539964"
+  }
+}
+```
+
+### Log / Pass : 
+```shell
 curl --location --request POST 'http://localhost:8069/tibillet-api/xmlrpc/login' \
+-H "Content-Type: application/json" \
 --data-raw '{
     "params": {
         "db": "${ODOO_DATABASE}",
@@ -256,6 +292,25 @@ curl --location --request POST 'http://localhost:8069/tibillet-api/xmlrpc/login'
     }
 }'
 ```
+
+Example response OK :
+
+```json
+{
+	"jsonrpc": "2.0",
+	"id": null,
+	"result": {
+		"random": "0.4738530572020506",
+		"user_uid": 9,
+		"authentification": true,
+		"permissions": {
+			"show_full_accounting_features": 28,
+			"manager": 62
+		}
+	}
+}
+```
+
 
 ### Permissions :
 
