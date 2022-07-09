@@ -242,7 +242,6 @@ validées et payées.
 
 ```Last log odoo:``` Vous montre la validité de la dernière action.
 
-## Configurer le Cashless
 
 ## API Test
 
