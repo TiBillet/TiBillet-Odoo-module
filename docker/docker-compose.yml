@@ -30,10 +30,11 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=frontend
+      - traefik.http.services.odoo_15.loadbalancer.server.port=8069
+      - traefik.http.routers.odoo_15.tls=true
       - traefik.http.routers.odoo_15.tls.certresolver=tlsresolver
       - traefik.http.routers.odoo_15.rule=Host(`${DOMAIN}`)
       - traefik.http.routers.odoo_15.entrypoints=websecure
-      - traefik.http.services.odoo_15.loadbalancer.server.port=8069
 
     networks:
       - frontend
