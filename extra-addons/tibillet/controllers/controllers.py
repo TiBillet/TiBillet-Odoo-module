@@ -10,6 +10,7 @@ import logging
 import re
 from datetime import datetime
 
+import odoo
 from odoo import http
 from odoo.exceptions import UserError
 from odoo.http import Response
@@ -62,8 +63,11 @@ class TiBilletApi(http.Controller):
     GENERIC FUNCTION
     '''
 
-    common = xmlrpc.client.ServerProxy('http://127.0.0.1:8069/xmlrpc/2/common')
-    models = xmlrpc.client.ServerProxy('http://127.0.0.1:8069/xmlrpc/2/object')
+    PORT = odoo.tools.config['http_port']
+    common = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/common")
+    models = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/object")
+    # common = xmlrpc.client.ServerProxy('http://127.0.0.1:8069/xmlrpc/2/common')
+    # models = xmlrpc.client.ServerProxy('http://127.0.0.1:8069/xmlrpc/2/object')
 
     def list_all(self, model, fields):
         return self.models.execute_kw(self.db, self.uid, self.apikey, model, 'search_read', [],
