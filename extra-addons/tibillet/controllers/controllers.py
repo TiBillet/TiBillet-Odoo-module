@@ -21,6 +21,41 @@ from slugify import slugify
 _logger = logging.getLogger(__name__)
 CORS = '*'
 
+'''
+Pour dev en local avec docker et ipython, ouvrir deux terminaux.
+Terminal 1 :
+docker exec -ti odoo bash
+python3 -m pip install ipython ipdb --user
+bash /entrypoint.sh --dev reload
+
+Terminal 2 :
+docker exec -ti odoo bash
+odoo shell
+
+*# Copier tout les import plus haut
+
+PORT = odoo.tools.config['http_port']
+common = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/common")
+models = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/object")
+
+
+# a remplir avec vos données :
+db = 'tibillet'
+login = 'jturbeaux@pm.me'
+apikey = '86eef3a46e9e84d52c97ee7fb3ba6e1da2a3618d'
+uid = common.authenticate(db, login, apikey, {})
+
+def search_read(model, filters, fields):
+    return models.execute_kw(db, uid, apikey, model, 'search_read', [filters],
+                                  {'fields': fields})
+
+def get_fields(model):
+    return models.execute_kw(db, uid, apikey, model, 'fields_get', [],
+                                  {'attributes': ['string', 'help', 'type']})
+
+get_fields('account.journal')
+search_read('account.journal', [], ['id', 'name'])
+'''
 
 class TiBilletApi(http.Controller):
     """
@@ -187,6 +222,10 @@ class TiBilletApi(http.Controller):
             all_account[account.get('name')] = account.get('id')
         self.accounts_journals = all_account
         return all_account
+
+    def get_all_account_analytic(self):
+        query_account_analytic = self.search_read('account.analytic.account', [], ['id', 'name', 'code', 'group_id'])
+        return query_account_analytic
 
     def get_all_curencys(self):
         query_currency = self.search_read('res.currency', [], ['id', 'name'])
@@ -384,6 +423,19 @@ class TiBilletApi(http.Controller):
             # if Response.status == 200:
             #     Response.status = '400'
             return {'status': False, 'error': str(e)}
+
+    # get all accounts
+    @http.route('/tibillet-api/xmlrpc/account_analytic', type="json", auth='none', cors=CORS, csrf=False)
+    def list_account_analytic(self, db=None, login=None, apikey=None, **kw):
+        try :
+            uid = self.auth_validator(db, login, apikey)
+            return self.get_all_account_analytic()
+        except Exception as e:
+            # if Response.status == 200:
+            #     Response.status = '400'
+            return {'status': False, 'error': str(e)}
+
+
 
 
     # creation d'un nouveau membre
