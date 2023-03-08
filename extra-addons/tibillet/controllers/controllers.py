@@ -436,8 +436,6 @@ class TiBilletApi(http.Controller):
             return {'status': False, 'error': str(e)}
 
 
-
-
     # creation d'un nouveau membre
     @http.route('/tibillet-api/xmlrpc/new_membership', type="json", auth='none', cors=CORS, csrf=False)
     def new_membership(self,
