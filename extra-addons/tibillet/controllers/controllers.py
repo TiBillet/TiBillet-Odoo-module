@@ -374,6 +374,18 @@ class TiBilletApi(http.Controller):
             #     Response.status = '400'
             return {'status': False, 'error': str(e)}
 
+    # get all accounts
+    @http.route('/tibillet-api/xmlrpc/account_journal', type="json", auth='none', cors=CORS, csrf=False)
+    def list_account_journal(self, db=None, login=None, apikey=None, **kw):
+        try :
+            uid = self.auth_validator(db, login, apikey)
+            return self.get_all_account_journal()
+        except Exception as e:
+            # if Response.status == 200:
+            #     Response.status = '400'
+            return {'status': False, 'error': str(e)}
+
+
     # creation d'un nouveau membre
     @http.route('/tibillet-api/xmlrpc/new_membership', type="json", auth='none', cors=CORS, csrf=False)
     def new_membership(self,

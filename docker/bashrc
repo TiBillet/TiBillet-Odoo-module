@@ -17,6 +17,7 @@ load_sql() {
 psql --dbname postgres -f $1
 }
 
+# reload_asset tibillet
 reload_asset(){
 psql --dbname postgres << EOF
 \c $1
