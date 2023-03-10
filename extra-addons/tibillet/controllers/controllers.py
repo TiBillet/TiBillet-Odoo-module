@@ -57,6 +57,7 @@ get_fields('account.journal')
 search_read('account.journal', [], ['id', 'name'])
 '''
 
+
 class TiBilletApi(http.Controller):
     """
     import ipdb; ipdb.set_trace()
@@ -101,6 +102,7 @@ class TiBilletApi(http.Controller):
     PORT = odoo.tools.config['http_port']
     common = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/common")
     models = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/object")
+
     # common = xmlrpc.client.ServerProxy('http://127.0.0.1:8069/xmlrpc/2/common')
     # models = xmlrpc.client.ServerProxy('http://127.0.0.1:8069/xmlrpc/2/object')
 
@@ -242,11 +244,10 @@ class TiBilletApi(http.Controller):
         if not self.curencys.get('EUR'):
             self.get_all_curencys()
 
-        if datetime_str :
+        if datetime_str:
             date_invoice = datetime_str
-        else :
+        else:
             date_invoice = datetime.now().strftime("%Y-%m-%d")
-
 
         values = {
             "currency_id": self.curencys.get('EUR'),
@@ -259,6 +260,7 @@ class TiBilletApi(http.Controller):
             "move_type": "out_invoice"
         }
 
+        print(values)
 
         invoice_draft_id = self.create("account.move", values=values)
         return invoice_draft_id
@@ -312,7 +314,7 @@ class TiBilletApi(http.Controller):
         }
 
         payment_date = datetime.now().strftime("%Y-%m-%d")
-        if datetime_str :
+        if datetime_str:
             payment_date = datetime_str
 
         values = {
@@ -416,7 +418,7 @@ class TiBilletApi(http.Controller):
     # get all accounts
     @http.route('/tibillet-api/xmlrpc/account_journal', type="json", auth='none', cors=CORS, csrf=False)
     def list_account_journal(self, db=None, login=None, apikey=None, **kw):
-        try :
+        try:
             uid = self.auth_validator(db, login, apikey)
             return self.get_all_account_journal()
         except Exception as e:
@@ -424,10 +426,10 @@ class TiBilletApi(http.Controller):
             #     Response.status = '400'
             return {'status': False, 'error': str(e)}
 
-    # get all accounts
+    # get all account_analytic
     @http.route('/tibillet-api/xmlrpc/account_analytic', type="json", auth='none', cors=CORS, csrf=False)
     def list_account_analytic(self, db=None, login=None, apikey=None, **kw):
-        try :
+        try:
             uid = self.auth_validator(db, login, apikey)
             return self.get_all_account_analytic()
         except Exception as e:
@@ -435,6 +437,37 @@ class TiBilletApi(http.Controller):
             #     Response.status = '400'
             return {'status': False, 'error': str(e)}
 
+    # Va créer un contact si il n'existe pas
+    @http.route('/tibillet-api/xmlrpc/gc_contact', type="json", auth='none', cors=CORS, csrf=False)
+    def get_or_create_contact(self,
+                              db=None, login=None, apikey=None,
+                              membre=None,
+                              **kw):
+        uid = self.auth_validator(db, login, apikey)
+        membre_uid, created = self.get_or_create_membre(membre)
+        return {'status': True, 'created': created, 'uid': membre_uid}
+
+    @http.route('/tibillet-api/xmlrpc/create_draft_invoice', type="json", auth='none', cors=CORS, csrf=False)
+    def post_create_draft_invoice(self,
+                             db=None, login=None, apikey=None,
+                             datetime_str=None,
+                             invoice_data=None,
+                             membre=None,
+                             **kw):
+        # Uid de l'auth
+        uid = self.auth_validator(db, login, apikey)
+
+        print("")
+        print("")
+        print(f"{invoice_data}")
+        print("")
+        print("")
+
+        draft_invoice_id = self.create_draft_invoice(uid, None)
+
+        return {
+            "draft_invoice_id": draft_invoice_id,
+        }
 
     # creation d'un nouveau membre
     @http.route('/tibillet-api/xmlrpc/new_membership', type="json", auth='none', cors=CORS, csrf=False)
@@ -452,7 +485,7 @@ class TiBilletApi(http.Controller):
             raise AttributeError('Pas de membre')
 
         datetime_str = None
-        if adhesion.get('datetime_str') :
+        if adhesion.get('datetime_str'):
             try:
                 datetime_str = datetime.strptime(adhesion.get('datetime_str'), "%Y-%m-%d").strftime("%Y-%m-%d")
             except:
