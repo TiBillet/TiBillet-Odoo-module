@@ -53,8 +53,10 @@ def get_fields(model):
     return models.execute_kw(db, uid, apikey, model, 'fields_get', [],
                                   {'attributes': ['string', 'help', 'type']})
 
+
 get_fields('account.journal')
 search_read('account.journal', [], ['id', 'name'])
+search_read('res.partner', [], ['id', 'name', 'email'])
 '''
 
 
@@ -414,6 +416,22 @@ class TiBilletApi(http.Controller):
             # if Response.status == 200:
             #     Response.status = '400'
             return {'status': False, 'error': str(e)}
+
+    # Appel générique read (lecture)
+    @http.route('/tibillet-api/xmlrpc/search_read', type="json", auth='none', cors=CORS, csrf=False)
+    def check_login(self, db=None, login=None, apikey=None, search_read_data=None,  **kw):
+        uid = self.auth_validator(db, login, apikey)
+        if uid and search_read_data :
+            model = search_read_data.get('model')
+            filters = search_read_data.get('filters', [])
+            fields = search_read_data.get('fields', [])
+            print(f'model : {model}')
+            print(f'filters : {filters}')
+            print(f'fields : {fields}')
+            query_account_analytic = self.search_read(model, filters, fields)
+            return query_account_analytic
+
+        raise Exception('search_read_data not found')
 
     # get all accounts
     @http.route('/tibillet-api/xmlrpc/account_journal', type="json", auth='none', cors=CORS, csrf=False)
