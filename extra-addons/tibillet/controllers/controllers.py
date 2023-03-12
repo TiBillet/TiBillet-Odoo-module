@@ -419,7 +419,7 @@ class TiBilletApi(http.Controller):
 
     # Appel générique read (lecture)
     @http.route('/tibillet-api/xmlrpc/search_read', type="json", auth='none', cors=CORS, csrf=False)
-    def check_login(self, db=None, login=None, apikey=None, search_read_data=None,  **kw):
+    def generic_search_read(self, db=None, login=None, apikey=None, search_read_data=None,  **kw):
         uid = self.auth_validator(db, login, apikey)
         if uid and search_read_data :
             model = search_read_data.get('model')
