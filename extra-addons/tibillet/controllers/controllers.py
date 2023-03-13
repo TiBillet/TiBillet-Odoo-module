@@ -4,13 +4,13 @@
 # Main Dev: Jonas TURBEAUX <contact@tibillet.re>
 # TiBillet - https://www.tibillet.re
 # Odoo version 15 #
-
-
+import base64
 import logging
 import re
 from datetime import datetime
 
 import odoo
+import requests
 from odoo import http
 from odoo.exceptions import UserError
 from odoo.http import Response
@@ -34,6 +34,21 @@ odoo shell
 
 *# Copier tout les import plus haut
 
+import base64
+import logging
+import re
+from datetime import datetime
+
+import odoo
+from odoo import http
+from odoo.exceptions import UserError
+from odoo.http import Response
+import xmlrpc.client
+import random
+from slugify import slugify
+
+_logger = logging.getLogger(__name__)
+CORS = '*'
 PORT = odoo.tools.config['http_port']
 common = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/common")
 models = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/object")
@@ -53,6 +68,10 @@ def get_fields(model):
     return models.execute_kw(db, uid, apikey, model, 'fields_get', [],
                                   {'attributes': ['string', 'help', 'type']})
 
+def create(model, values=None):
+        if values is None:
+            raise AttributeError('No values for create')
+        return models.execute_kw(db, uid, apikey, model, 'create', [values])
 
 get_fields('account.journal')
 search_read('account.journal', [], ['id', 'name'])
@@ -275,22 +294,35 @@ class TiBilletApi(http.Controller):
         }
         return self.write('account.move', invoice_id, values)
 
-    def add_product_to_invoice(self, invoice_id=None, product_id=None, price_unit=None, qty=1):
+    def add_product_to_invoice(self,
+                               invoice_id=None,
+                               product_id=None,
+                               price_unit=None,
+                               analytic_account_id=None,
+                               account_id=None,
+                               qty=1):
+
         if invoice_id == None or \
                 product_id == None or \
                 price_unit == None:
             raise AttributeError(f"add_product_to_invoice attribute error")
 
+        dict_value = {
+            "move_id": invoice_id,
+            "currency_id": "2",
+            "product_id": product_id,
+            "price_unit": price_unit,
+            "quantity": qty
+        }
+
+        if analytic_account_id:
+            dict_value["analytic_account_id"] = analytic_account_id
+        if account_id:
+            dict_value["account_id"] = analytic_account_id
+
         values = {
             "invoice_line_ids": [
-                [0, 0, {
-                    "move_id": invoice_id,
-                    "currency_id": "2",
-                    "product_id": product_id,
-                    "price_unit": price_unit,
-                    "quantity": qty
-                }
-                 ]
+                [0, 0, dict_value]
             ]
         }
         return self.write('account.move', invoice_id, values)
@@ -419,9 +451,9 @@ class TiBilletApi(http.Controller):
 
     # Appel générique read (lecture)
     @http.route('/tibillet-api/xmlrpc/search_read', type="json", auth='none', cors=CORS, csrf=False)
-    def generic_search_read(self, db=None, login=None, apikey=None, search_read_data=None,  **kw):
+    def generic_search_read(self, db=None, login=None, apikey=None, search_read_data=None, **kw):
         uid = self.auth_validator(db, login, apikey)
-        if uid and search_read_data :
+        if uid and search_read_data:
             model = search_read_data.get('model')
             filters = search_read_data.get('filters', [])
             fields = search_read_data.get('fields', [])
@@ -465,13 +497,30 @@ class TiBilletApi(http.Controller):
         membre_uid, created = self.get_or_create_membre(membre)
         return {'status': True, 'created': created, 'uid': membre_uid}
 
-    @http.route('/tibillet-api/xmlrpc/create_draft_invoice', type="json", auth='none', cors=CORS, csrf=False)
-    def post_create_draft_invoice(self,
-                             db=None, login=None, apikey=None,
-                             datetime_str=None,
-                             invoice_data=None,
-                             membre=None,
-                             **kw):
+    def create_attachemnt(self, url, invoice_id):
+        fetch_file = requests.get(url)
+        if fetch_file.status_code == 200:
+            file = base64.b64encode(fetch_file.content)
+
+            values = {
+                'res_model': 'account.move',
+                'res_id': 32,
+                'name': 'qonto_pdf',
+                'type': 'binary',
+                'mimetype': 'application/pdf',
+                'store_fname': 'qonto_pdf.pdf',
+                'datas': file,
+            }
+            ir_attachment = self.create("ir.attachment", values=values)
+            return ir_attachment
+        return False
+
+    @http.route('/tibillet-api/xmlrpc/tiqo_create_draft_invoice', type="json", auth='none', cors=CORS, csrf=False)
+    def tiqo_create_draft_invoice(self,
+                                  db=None, login=None, apikey=None,
+                                  datetime_str=None,
+                                  invoice_data=None,
+                                  **kw):
         # Uid de l'auth
         uid = self.auth_validator(db, login, apikey)
 
@@ -481,11 +530,59 @@ class TiBilletApi(http.Controller):
         print("")
         print("")
 
-        draft_invoice_id = self.create_draft_invoice(uid, None)
+        article_id = invoice_data.get("article")
 
-        return {
-            "draft_invoice_id": draft_invoice_id,
+        article = self.search_read("product.product", [("id", "=", article_id)], ["id", "name", "price"])[0]
+        print(f"article : {article}")
+
+        compte_analytique = invoice_data.get("compte_analytique")
+
+        account = invoice_data.get("account")
+
+        self.get_all_account_journal()
+        facture_client_journal = self.accounts_journals.get('Factures clients')
+
+        beneficiaire_id = invoice_data.get("beneficiaire_id")
+        initiator_id = invoice_data.get("initiator_id")
+        invoice_name = invoice_data.get("invoice_name")
+        ammount_cents = invoice_data.get("ammount_cents")
+        date_invoice = invoice_data.get("date")
+
+        self.get_all_curencys()
+        currency_id = self.curencys.get('EUR')
+
+        #
+        # journal = self.accounts_journals.get('Factures clients')
+
+        values = {
+            "currency_id": currency_id,
+            "date": date_invoice,
+            "invoice_date": date_invoice,
+            "journal_id": facture_client_journal,
+            "partner_id": beneficiaire_id,
+            "payment_state": "not_paid",
+            "state": "draft",
+            "move_type": "out_invoice",
         }
+        print(values)
+
+        try:
+            invoice_draft_id = self.create("account.move", values=values)
+
+            article_added = self.add_product_to_invoice(
+                invoice_id=invoice_draft_id,
+                product_id=article['id'],
+                price_unit=int(ammount_cents) / 100,
+                analytic_account_id=compte_analytique,
+                # account_id=account,
+                qty=1)
+
+            return {'status': True, 'invoice_draft_id': invoice_draft_id, 'article_id': article['id'],
+                    'article_added': article_added}
+        except Exception as e:
+            import ipdb;
+            ipdb.set_trace()
+            return {'status': False, 'error': str(e)}
 
     # creation d'un nouveau membre
     @http.route('/tibillet-api/xmlrpc/new_membership', type="json", auth='none', cors=CORS, csrf=False)
