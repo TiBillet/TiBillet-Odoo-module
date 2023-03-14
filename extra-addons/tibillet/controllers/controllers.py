@@ -497,18 +497,18 @@ class TiBilletApi(http.Controller):
         membre_uid, created = self.get_or_create_membre(membre)
         return {'status': True, 'created': created, 'uid': membre_uid}
 
-    def create_attachemnt(self, url, invoice_id):
+    def create_attachemnt(self, url=None, name=None, invoice_id=None):
         fetch_file = requests.get(url)
         if fetch_file.status_code == 200:
             file = base64.b64encode(fetch_file.content)
 
             values = {
                 'res_model': 'account.move',
-                'res_id': 32,
-                'name': 'qonto_pdf',
+                'res_id': invoice_id,
+                'name': f'{name}',
                 'type': 'binary',
                 'mimetype': 'application/pdf',
-                'store_fname': 'qonto_pdf.pdf',
+                'store_fname': f'{name}',
                 'datas': file,
             }
             ir_attachment = self.create("ir.attachment", values=values)
@@ -547,6 +547,7 @@ class TiBilletApi(http.Controller):
         invoice_name = invoice_data.get("invoice_name")
         ammount_cents = invoice_data.get("ammount_cents")
         date_invoice = invoice_data.get("date")
+        attachments = invoice_data.get("attachments")
 
         self.get_all_curencys()
         currency_id = self.curencys.get('EUR')
@@ -564,7 +565,14 @@ class TiBilletApi(http.Controller):
             "state": "draft",
             "move_type": "out_invoice",
         }
-        print(values)
+        print(f"")
+        print(f"tiqo_create_draft_invoice *************************************")
+        print(f"values : {values}")
+        print(f"attachments : {attachments}")
+        print(f"initiator_id : {initiator_id}")
+        print(f"invoice_name : {invoice_name}")
+        print(f"tiqo_create_draft_invoice *************************************")
+        print(f"")
 
         try:
             invoice_draft_id = self.create("account.move", values=values)
@@ -577,11 +585,15 @@ class TiBilletApi(http.Controller):
                 # account_id=account,
                 qty=1)
 
+            attachments_id = []
+            for attachment in attachments:
+                attachment = self.create_attachemnt(name=attachment[0], url=attachment[1], invoice_id=invoice_draft_id)
+                attachments_id.append(attachment)
+
             return {'status': True, 'invoice_draft_id': invoice_draft_id, 'article_id': article['id'],
-                    'article_added': article_added}
+                    'article_added': article_added, 'attachments_id': attachments_id}
         except Exception as e:
-            import ipdb;
-            ipdb.set_trace()
+            # import ipdb; ipdb.set_trace()
             return {'status': False, 'error': str(e)}
 
     # creation d'un nouveau membre
