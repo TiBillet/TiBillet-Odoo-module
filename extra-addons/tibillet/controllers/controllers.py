@@ -53,8 +53,6 @@ PORT = odoo.tools.config['http_port']
 common = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/common")
 models = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/object")
 
-
-# a remplir avec vos données :
 db = 'tibillet'
 login = 'jturbeaux@pm.me'
 apikey = '86eef3a46e9e84d52c97ee7fb3ba6e1da2a3618d'
@@ -299,7 +297,9 @@ class TiBilletApi(http.Controller):
                                product_id=None,
                                price_unit=None,
                                analytic_account_id=None,
-                               account_id=None,
+                               account_account_id=None,
+                               vat_amount=None,
+                               libelle=None,
                                qty=1):
 
         if invoice_id == None or \
@@ -315,16 +315,26 @@ class TiBilletApi(http.Controller):
             "quantity": qty
         }
 
+        if libelle:
+            dict_value["name"] = libelle
         if analytic_account_id:
             dict_value["analytic_account_id"] = analytic_account_id
-        if account_id:
-            dict_value["account_id"] = analytic_account_id
+        if account_account_id:
+            dict_value["account_id"] = account_account_id
+        if vat_amount:
+            taxes = self.search_read('account.tax', [['amount',"=",f"{vat_amount}"]], ['id', 'name', 'amount'])
+            for taxe in taxes:
+                if "TVA collectée (vente)" in taxe['name']:
+                    if "TTC" in taxe['name']:
+                        taxe_id = taxe['id']
+                        dict_value["tax_ids"] = [taxe_id,]
 
         values = {
             "invoice_line_ids": [
                 [0, 0, dict_value]
             ]
         }
+        # import ipdb; ipdb.set_trace()
         return self.write('account.move', invoice_id, values)
 
     '''
@@ -530,30 +540,27 @@ class TiBilletApi(http.Controller):
         print("")
         print("")
 
-        article_id = invoice_data.get("article")
-
-        article = self.search_read("product.product", [("id", "=", article_id)], ["id", "name", "price"])[0]
-        print(f"article : {article}")
-
-        compte_analytique = invoice_data.get("compte_analytique")
-
-        account = invoice_data.get("account")
 
         self.get_all_account_journal()
         facture_client_journal = self.accounts_journals.get('Factures clients')
 
+        article_id = invoice_data.get("article")
+        article = self.search_read("product.product", [("id", "=", article_id)], ["id", "name", "price"])[0]
+        print(f"article : {article}")
+
+
+        compte_analytique = invoice_data.get("compte_analytique")
         beneficiaire_id = invoice_data.get("beneficiaire_id")
         initiator_id = invoice_data.get("initiator_id")
         invoice_name = invoice_data.get("invoice_name")
         ammount_cents = invoice_data.get("ammount_cents")
+        vat_amount = invoice_data.get("vat_amount")
         date_invoice = invoice_data.get("date")
         attachments = invoice_data.get("attachments")
+        account_account_id = invoice_data.get("account_account")
 
         self.get_all_curencys()
         currency_id = self.curencys.get('EUR')
-
-        #
-        # journal = self.accounts_journals.get('Factures clients')
 
         values = {
             "currency_id": currency_id,
@@ -578,11 +585,13 @@ class TiBilletApi(http.Controller):
             invoice_draft_id = self.create("account.move", values=values)
 
             article_added = self.add_product_to_invoice(
+                libelle=invoice_name,
                 invoice_id=invoice_draft_id,
                 product_id=article['id'],
                 price_unit=int(ammount_cents) / 100,
                 analytic_account_id=compte_analytique,
-                # account_id=account,
+                vat_amount=vat_amount,
+                account_account_id=account_account_id,
                 qty=1)
 
             attachments_id = []
