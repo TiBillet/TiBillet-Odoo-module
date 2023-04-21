@@ -541,8 +541,6 @@ class TiBilletApi(http.Controller):
         print("")
 
 
-        self.get_all_account_journal()
-        facture_client_journal = self.accounts_journals.get('Factures clients')
 
         article_id = invoice_data.get("article")
         article = self.search_read("product.product", [("id", "=", article_id)], ["id", "name", "price"])[0]
@@ -559,6 +557,20 @@ class TiBilletApi(http.Controller):
         attachments = invoice_data.get("attachments")
         account_account_id = invoice_data.get("account_account")
 
+        # Par default :
+        move_type = "out_invoice"
+        move_type_choice = {
+            "Factures clients": "out_invoice",
+            "Factures fournisseurs": "in_invoice",
+        }
+        journaux = self.get_all_account_journal()
+        journal_id = invoice_data.get('account_journal')
+        for journal, id in journaux.items() :
+            if journal_id == id:
+                move_type = move_type_choice.get(journal)
+
+        # import ipdb; ipdb.set_trace()
+
         self.get_all_curencys()
         currency_id = self.curencys.get('EUR')
 
@@ -566,12 +578,13 @@ class TiBilletApi(http.Controller):
             "currency_id": currency_id,
             "date": date_invoice,
             "invoice_date": date_invoice,
-            "journal_id": facture_client_journal,
+            "journal_id": journal_id,
             "partner_id": beneficiaire_id,
+            "move_type": move_type,
             "payment_state": "not_paid",
             "state": "draft",
-            "move_type": "out_invoice",
         }
+
         print(f"")
         print(f"tiqo_create_draft_invoice *************************************")
         print(f"values : {values}")
@@ -599,10 +612,18 @@ class TiBilletApi(http.Controller):
                 attachment = self.create_attachemnt(name=attachment[0], url=attachment[1], invoice_id=invoice_draft_id)
                 attachments_id.append(attachment)
 
+            print(f"")
+            print(f"tiqo_create_draft_invoice RESPONSE *************************************")
+            print({'status': True, 'invoice_draft_id': invoice_draft_id, 'article_id': article['id'],
+                    'article_added': article_added, 'attachments_id': attachments_id})
+            print(f"tiqo_create_draft_invoice RESPONSE *************************************")
+            print(f"")
+
             return {'status': True, 'invoice_draft_id': invoice_draft_id, 'article_id': article['id'],
                     'article_added': article_added, 'attachments_id': attachments_id}
+
         except Exception as e:
-            # import ipdb; ipdb.set_trace()
+            print(f"erreur création invoice_draft_id {e}")
             return {'status': False, 'error': str(e)}
 
     # creation d'un nouveau membre
