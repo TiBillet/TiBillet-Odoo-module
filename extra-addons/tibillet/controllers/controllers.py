@@ -119,8 +119,8 @@ class TiBilletApi(http.Controller):
     '''
 
     PORT = odoo.tools.config['http_port']
-    common = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/common")
-    models = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/object")
+    common = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/common", allow_none=True)
+    models = xmlrpc.client.ServerProxy(f"http://127.0.0.1:{PORT}/xmlrpc/2/object", allow_none=True)
 
     # common = xmlrpc.client.ServerProxy('http://127.0.0.1:8069/xmlrpc/2/common')
     # models = xmlrpc.client.ServerProxy('http://127.0.0.1:8069/xmlrpc/2/object')
