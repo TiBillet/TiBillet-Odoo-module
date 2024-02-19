@@ -562,10 +562,11 @@ class TiBilletApi(http.Controller):
         account_account_id = invoice_data.get("account_account")
 
         # Par default :
+        #TODO: eviter de choisir avec le name. Indiquer l'id dans la config TiQO
         move_type = "out_invoice"
         move_type_choice = {
-            "Factures clients": "out_invoice",
-            "Factures fournisseurs": "in_invoice",
+            "Factures Clients": "out_invoice",
+            "Factures Fournisseurs": "in_invoice",
         }
         journaux = self.get_all_account_journal()
         journal_id = invoice_data.get('account_journal')
