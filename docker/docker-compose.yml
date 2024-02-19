@@ -25,7 +25,7 @@ services:
       - USER=${POSTGRES_USER}
       - PASSWORD=${POSTGRES_PASSWORD}
 #    command: bash entrypoint.sh --dev reload
-#    Pour dev, lancer le docker avec sleep 30d puis entrez bash entrypoint.sh --dev reload
+#    Pour dev, lancer le docker avec sleep 30d puis entrez bash /entrypoint.sh --dev reload
     command: sleep 30d
 
     labels:

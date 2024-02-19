@@ -244,6 +244,7 @@ class TiBilletApi(http.Controller):
         self.accounts_journals = all_account
         return all_account
 
+
     def get_all_account_analytic(self):
         query_account_analytic = self.search_read('account.analytic.account', [], ['id', 'name', 'code', 'group_id'])
         return query_account_analytic
@@ -256,10 +257,10 @@ class TiBilletApi(http.Controller):
         self.curencys = all_currency
         return all_currency
 
-    def create_draft_invoice(self, partner_id, datetime_str):
-        if not self.accounts_journals.get('Factures clients'):
-            self.get_all_account_journal()
-
+    def create_draft_invoice(self,
+                             partner_id,
+                             datetime_str,
+                             journal_invoice_name):
         if not self.curencys.get('EUR'):
             self.get_all_curencys()
 
@@ -268,11 +269,14 @@ class TiBilletApi(http.Controller):
         else:
             date_invoice = datetime.now().strftime("%Y-%m-%d")
 
+        accounts = self.get_all_account_journal()
+        journal_id = accounts.get(journal_invoice_name)
+
         values = {
             "currency_id": self.curencys.get('EUR'),
             "date": date_invoice,
             "invoice_date": date_invoice,
-            "journal_id": self.accounts_journals.get('Factures clients'),
+            "journal_id": journal_id, # Facture Client
             "partner_id": partner_id,
             "payment_state": "not_paid",
             "state": "draft",
@@ -633,6 +637,7 @@ class TiBilletApi(http.Controller):
                        membre=None,
                        adhesion=None,
                        create_invoice=None,
+                       journal_out_invoice_name=None,
                        set_payment=None,
                        **kw):
 
@@ -640,6 +645,8 @@ class TiBilletApi(http.Controller):
             raise AttributeError("Pas d'adhésion")
         if membre is None:
             raise AttributeError('Pas de membre')
+        if journal_out_invoice_name is None:
+            raise AttributeError('Pas de journal_out_invoice_name')
 
         datetime_str = None
         if adhesion.get('datetime_str'):
@@ -658,7 +665,7 @@ class TiBilletApi(http.Controller):
             payment_state = "No payment"
             if create_invoice:
                 membership_product_id, pcreated = self.get_or_create_membership_product(adhesion)
-                draft_invoice_id = self.create_draft_invoice(membre_uid, datetime_str)
+                draft_invoice_id = self.create_draft_invoice(membre_uid, datetime_str, journal_out_invoice_name)
 
                 # clear = self.clear_invoice_lines(draft_invoice_id)
 
